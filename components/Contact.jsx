@@ -1,33 +1,28 @@
 import React,{useState,useRef} from 'react'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios'
 
 const Contact = () => {
-  const [form,setForm]=useState({}); 
-  const email ={
-    email:'bro2gmail.com'
-  }
+  const [email,setEmail]=useState(""); 
+ 
 
-  const config={
-    Host:'smtp.elasticemail.com',
-    Username:'siddharth17vaishnav@gmail.com',
-    Password:'48E371036745D4357B311270EBECC39BFBF1',
-    To : 'siddharth.vaishnav2gmail.com',
-    From : "asdasd@gmail.com",
-    Subject : "This is the subject",
-    Body : `hello from ${form.email}`
-  }
-
-  const changeHandler=(event)=>{
-    setForm({...form,[event.targnet.name]:[event.target.value]})
-  }
-
-  const handleForm=(event)=>{
-    event.preventDefault();
-    console.log(form)
-    if(window.Email){
-      window.Email.send(config).then((res)=>{console.log("RESPONSE====>>>>>",res)});
-    }
+  const handleForm=(e)=>{
+    e.preventDefault();
+    axios.post('/api/contact',{email:email}).then((res)=>{
+      console.log(res.data)
+      if(res.data==='success'){
+        toast.success("Great! we will get back to you soon",{
+          position:"top-center"
+        });
+      }
+      else{
+        toast.error(res.data,{
+          position:"top-center"
+        });
+      }
+    });
+   
   }
   
   return (
@@ -49,7 +44,7 @@ const Contact = () => {
               className='p-3 flex w-full rounded-md text-black outline outline-2  outline-offset-2'
               type='email'
               placeholder='Enter Email'
-              onChange={changeHandler}
+              onChange={(e)=>setEmail(e.target.value)}
               name='email'
               id="email"
            
